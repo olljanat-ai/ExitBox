@@ -184,7 +184,22 @@ func EnsureAgentConfig(workspaceName, agent string) error {
 
 		ocCache := ensureDir(root, ".cache", "opencode")
 		seedDirOnce(filepath.Join(home, ".cache", "opencode"), ocCache)
-	}
+	case "openclaw":
+		ocDir := ensureDir(root, ".openclaw")
+		seedDirOnce(filepath.Join(home, ".openclaw"), ocDir)
+		
+		ocCfg := ensureDir(root, ".config", "openclaw")
+		seedDirOnce(filepath.Join(home, ".config", "openclaw"), ocCfg)
+
+		ocShare := ensureDir(root, ".local", "share", "openclaw")
+		seedDirOnce(filepath.Join(home, ".local", "share", "openclaw"), ocShare)
+		
+		ocState := ensureDir(root, ".local", "state")
+		seedDirOnce(filepath.Join(home, ".local", "state"), ocState)
+
+		ocCache := ensureDir(root, ".cache", "openclaw")
+		seedDirOnce(filepath.Join(home, ".cache", "openclaw"), ocCache)
+	}	
 	return nil
 }
 

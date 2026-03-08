@@ -16,6 +16,7 @@ func TestDisplayName(t *testing.T) {
 		{"claude", "Claude Code"},
 		{"codex", "OpenAI Codex"},
 		{"opencode", "OpenCode"},
+		{"openclaw", "OpenClaw"},
 		{"unknown", "unknown"},
 		{"", ""},
 	}
@@ -48,10 +49,10 @@ func TestIsValidAgent(t *testing.T) {
 }
 
 func TestAgentNames(t *testing.T) {
-	if len(AgentNames) != 3 {
-		t.Fatalf("expected 3 agent names, got %d", len(AgentNames))
+	if len(AgentNames) != 4 {
+		t.Fatalf("expected 4 agent names, got %d", len(AgentNames))
 	}
-	expected := map[string]bool{"claude": true, "codex": true, "opencode": true}
+	expected := map[string]bool{"claude": true, "codex": true, "opencode": true, "openclaw": true}
 	for _, name := range AgentNames {
 		if !expected[name] {
 			t.Errorf("unexpected agent name: %s", name)
@@ -254,8 +255,69 @@ func TestOpenCodeAgent(t *testing.T) {
 	}
 }
 
+func TestOpenClawAgent(t *testing.T) {
+	o := &OpenClaw{}
+	if o.Name() != "openclaw" {
+		t.Errorf("Name() = %q, want %q", o.Name(), "openclaw")
+	}
+	if o.DisplayName() != "OpenClaw" {
+		t.Errorf("DisplayName() = %q, want %q", o.DisplayName(), "OpenClaw")
+	}
+
+	// BinaryName - now returns empty string (npm-based, no tarball)
+	bn := o.BinaryName()
+	if bn != "" {
+		t.Errorf("BinaryName() = %q, want empty string (npm-based installation)", bn)
+	}
+
+	// HostConfigPaths
+	paths := o.HostConfigPaths()
+	if len(paths) != 2 {
+		t.Fatalf("HostConfigPaths() returned %d paths, want 2", len(paths))
+	}
+
+	// ContainerMounts
+	mounts := o.ContainerMounts("/cfg")
+	if len(mounts) != 2 {
+		t.Fatalf("ContainerMounts() returned %d mounts, want 2", len(mounts))
+	}
+	if mounts[0].Target != "/home/user/.openclaw" {
+		t.Errorf("mounts[0].Target = %q, want /home/user/.openclaw", mounts[0].Target)
+	}
+
+	// GetDockerfileInstall - npm version (no sha256sum)
+	df, err := o.GetDockerfileInstall("")
+	if err != nil {
+		t.Fatalf("GetDockerfileInstall() error: %v", err)
+	}
+	if !strings.Contains(df, "npm install -g openclaw@${OPENCLAW_VERSION}") {
+		t.Error("GetDockerfileInstall() should contain the npm install command")
+	}
+	if !strings.Contains(df, "apk add --no-cache nodejs npm") {
+		t.Error("GetDockerfileInstall() should install nodejs + npm from Alpine")
+	}
+	if strings.Contains(df, "sha256sum") {
+		t.Error("GetDockerfileInstall() should NOT contain sha256sum (npm-based)")
+	}
+
+	// GetFullDockerfile - must declare BOTH ARGs (as required by ExitBox)
+	full, err := o.GetFullDockerfile("0.1.0")
+	if err != nil {
+		t.Fatalf("GetFullDockerfile() error: %v", err)
+	}
+	if !strings.HasPrefix(full, "FROM exitbox-base") {
+		t.Error("GetFullDockerfile() should start with FROM exitbox-base")
+	}
+	if !strings.Contains(full, "OPENCLAW_VERSION=0.1.0") {
+		t.Error("GetFullDockerfile() should include OPENCLAW_VERSION ARG")
+	}
+	if !strings.Contains(full, "OPENCLAW_CHECKSUM") {
+		t.Error("GetFullDockerfile() should include OPENCLAW_CHECKSUM ARG")
+	}
+}
+
 func TestGetInstalledVersion_NilRuntime(t *testing.T) {
-	agents := []Agent{&Claude{}, &Codex{}, &OpenCode{}}
+	agents := []Agent{&Claude{}, &Codex{}, &OpenCode{}, &OpenClaw{}}
 	for _, a := range agents {
 		_, err := a.GetInstalledVersion(nil, "some-image")
 		if err == nil {

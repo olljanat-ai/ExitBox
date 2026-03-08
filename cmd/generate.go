@@ -172,6 +172,8 @@ func runGenerate(agentName, displayName, workspaceFlag string) {
 		configData = generate.GenerateClaude(serverCfg)
 	case "codex":
 		configData = generate.GenerateCodex(serverCfg)
+	case "openclaw":
+		configData = generate.GenerateOpenClaw(serverCfg)
 	}
 
 	// Ensure agent config directory exists.

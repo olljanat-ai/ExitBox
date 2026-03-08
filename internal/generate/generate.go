@@ -134,6 +134,14 @@ func GenerateCodex(cfg ServerConfig) map[string]interface{} {
 	}
 }
 
+// GenerateOpenClaw produces an OpenClaw config.json config map.
+func GenerateOpenClaw(cfg ServerConfig) map[string]interface{} {
+	return map[string]interface{}{
+		"model":    cfg.ProviderID + "/" + cfg.ModelID,
+		"provider": cfg.BaseURL,
+	}
+}
+
 // MergeJSON deep-merges generated values into existing, returning a new map.
 // Generated values override existing at leaf level; existing keys not in
 // generated are preserved.
@@ -201,6 +209,8 @@ func ConfigPath(agentDir, agentName string) string {
 		return filepath.Join(agentDir, ".claude", "settings.json")
 	case "codex":
 		return filepath.Join(agentDir, ".codex", "config.json")
+	case "openclaw":
+		return filepath.Join(agentDir, ".openclaw", "config.json")
 	}
 	return ""
 }
@@ -231,6 +241,8 @@ func ExtractConfigHosts(agentDir, agentName string) []string {
 		urls = extractClaudeURLs(data)
 	case "codex":
 		urls = extractCodexURLs(data)
+	case "openclaw":
+		urls = extractOpenClawURLs(data)
 	}
 
 	return deduplicateHosts(urls)
@@ -269,6 +281,14 @@ func extractClaudeURLs(data map[string]interface{}) []string {
 
 // extractCodexURLs reads the top-level provider URL from a Codex config.
 func extractCodexURLs(data map[string]interface{}) []string {
+	if provider, ok := data["provider"].(string); ok && provider != "" {
+		return []string{provider}
+	}
+	return nil
+}
+
+// extractOpenClawURLs reads the top-level provider URL from an OpenClaw config.
+func extractOpenClawURLs(data map[string]interface{}) []string {
 	if provider, ok := data["provider"].(string); ok && provider != "" {
 		return []string{provider}
 	}

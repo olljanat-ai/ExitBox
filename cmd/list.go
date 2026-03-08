@@ -49,6 +49,7 @@ var listCmd = &cobra.Command{
 			{"claude", "Claude Code"},
 			{"codex", "OpenAI Codex"},
 			{"opencode", "OpenCode"},
+			{"openclaw", "OpenClaw"},
 		}
 
 		for _, a := range agents {

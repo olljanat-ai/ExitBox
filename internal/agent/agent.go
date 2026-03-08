@@ -41,7 +41,7 @@ type Agent interface {
 }
 
 // AgentNames is the list of all supported agent names.
-var AgentNames = []string{"claude", "codex", "opencode"}
+var AgentNames = []string{"claude", "codex", "opencode", "openclaw"}
 
 // DisplayName returns the human-readable name for an agent.
 func DisplayName(name string) string {
@@ -52,6 +52,8 @@ func DisplayName(name string) string {
 		return "OpenAI Codex"
 	case "opencode":
 		return "OpenCode"
+	case "openclaw":
+		return "OpenClaw"
 	}
 	return name
 }
@@ -83,4 +85,5 @@ func init() {
 	Register(&Claude{})
 	Register(&Codex{})
 	Register(&OpenCode{})
+	Register(&OpenClaw{})
 }

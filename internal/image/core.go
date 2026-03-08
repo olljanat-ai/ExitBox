@@ -179,6 +179,15 @@ func BuildCore(ctx context.Context, rt container.Runtime, agentName string, forc
 		if err := os.WriteFile(dockerfilePath, []byte(df), 0644); err != nil {
 			return fmt.Errorf("failed to write Dockerfile: %w", err)
 		}
+
+	case "openclaw":
+		df, err := a.GetFullDockerfile(latestVersion)
+		if err != nil {
+			return err
+		}
+		if err := os.WriteFile(dockerfilePath, []byte(df), 0644); err != nil {
+			return fmt.Errorf("failed to write Dockerfile: %w", err)
+		}
 	}
 
 	// Add labels

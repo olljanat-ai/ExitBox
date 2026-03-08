@@ -472,6 +472,10 @@ func ollamaEnvVars(agent string) []string {
 		return []string{
 			"-e", "OLLAMA_HOST=" + ollamaURL,
 		}
+	case "openclaw":
+		return []string{
+			"-e", "OPENCLAW_BASE_URL=" + ollamaURL,
+		}
 	}
 	return nil
 }

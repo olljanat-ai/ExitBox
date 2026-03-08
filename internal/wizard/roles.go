@@ -183,6 +183,7 @@ var AllAgents = []AgentOption{
 	{Name: "claude", DisplayName: "Claude Code", Description: "Anthropic's AI coding assistant"},
 	{Name: "codex", DisplayName: "OpenAI Codex", Description: "OpenAI's coding CLI"},
 	{Name: "opencode", DisplayName: "OpenCode", Description: "Open-source AI code assistant"},
+	{Name: "openclaw", DisplayName: "OpenClaw", Description: "Open-source personal AI assistant"},
 }
 
 // GetRole returns the role by name, or nil.

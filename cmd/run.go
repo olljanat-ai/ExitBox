@@ -48,6 +48,7 @@ Available agents:
   claude      Claude Code (Anthropic)
   codex       OpenAI Codex CLI
   opencode    OpenCode (open-source)
+  openclaw    OpenClaw (open-source)
 
 Workspaces:
   Workspaces are named contexts (e.g. personal/work) with development stacks
@@ -331,16 +332,16 @@ type parsedFlags struct {
 	SessionName    string
 	SessionNameSet bool // true when --name was explicitly passed
 	Verbose        bool
-	ForceUpdate bool
-	Workspace   string
-	Ollama      bool
-	Memory      string
-	CPUs        string
-	EnvVars     []string
-	IncludeDirs []string
-	AllowURLs   []string
-	Tools       []string
-	Remaining   []string
+	ForceUpdate    bool
+	Workspace      string
+	Ollama         bool
+	Memory         string
+	CPUs           string
+	EnvVars        []string
+	IncludeDirs    []string
+	AllowURLs      []string
+	Tools          []string
+	Remaining      []string
 }
 
 func parseRunFlags(passthrough []string, defaults config.DefaultFlags) parsedFlags {
